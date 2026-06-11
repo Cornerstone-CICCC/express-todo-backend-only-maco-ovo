@@ -1,4 +1,4 @@
-import express, { type NextFunction } from "express";
+import express from "express";
 
 const app = express();
 const PORT = 3000;
@@ -33,11 +33,16 @@ app.get("/todos", (req, res) => {
 
 app.post("/todos", (req, res) => {
 	const { title, completed } = req.body;
-	const newTodo = {
-		id: todos.length + 1,
-		title,
-		completed,
-	};
+	
+  const lastTodo = todos[todos.length - 1];
+  
+  const newId = lastTodo ? lastTodo.id + 1 : 1;
+
+  const newTodo = {
+    id: newId,
+    title,
+    completed,
+  };
 
 	if (!title || completed === undefined) {
 		res.status(400).send({ message: "Title and completed are required" });
@@ -83,7 +88,6 @@ app.put("/todos/:id", (req, res) => {
     return;
   }
 
-  // 配列の該当データを上書きする
   todos[todoId] = { id, title, completed };
   res.status(200).send(todos[todoId]);
 });
